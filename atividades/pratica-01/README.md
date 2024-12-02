@@ -37,12 +37,14 @@ de adicionar e uma lista onde as tarefas serão exibidas.
     <div class="container">
       <h1>To-Do List</h1>
       <div class="entrada">
-        <input
-          type="text"
-          placeholder="Nome da tarefa..."
-          id="campoEntrada"
-        />
-        <button id="btnAdicionar">Adicionar</button>
+        <form id="formTarefa">
+          <input
+            type="text"
+            placeholder="Nome da tarefa..."
+            id="campoEntrada"
+          />
+          <button>Adicionar</button>
+        </form>
       </div>
 
       <div>
@@ -52,9 +54,10 @@ de adicionar e uma lista onde as tarefas serão exibidas.
     </div>
   </body>
 </html>
+
 ```
 
-> **Explicação**: Aqui, temos um campo de entrada (`<input>`), um botão de adicionar (`<button>`) e uma lista (`<ul>`) onde as tarefas serão exibidas. Os `IDs` atribuídos facilitarão a manipulação desses elementos a partir do JavaScript.
+> **Explicação**: Aqui, temos um formulário, com um campo de entrada (`<input>`) e um botão de adicionar (`<button>`), e uma lista (`<ul>`) onde as tarefas serão exibidas. Os `IDs` atribuídos facilitarão a manipulação desses elementos a partir do JavaScript.
 
 > 🚨❓ **Questão 01**
 > *- O que precisamos fazer para adicionar um script na seção `<head>` de uma página HTML e definir que ele só deve ser executado ao finalizar o carregamento da página?*
@@ -101,11 +104,15 @@ body {
 }
 
 .entrada {
-  display: flex;
   width: 100%;
-  gap: 1rem;
 
-  & > * {
+  & form {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+  }
+
+  & form > * {
     padding: 0.5rem;
     font-size: 1rem;
   }
@@ -195,27 +202,31 @@ span.concluida {
 > - **Exemplo:** 
 > ```css
 > .entrada {
->  display: flex;
->  width: 100%;
->  gap: 1rem;
+>   width: 100%;
 >
->  & > * {
->    padding: 0.5rem;
->    font-size: 1rem;
->  }
+>   & form {
+>     display: flex;
+>     width: 100%;
+>     gap: 1rem;
+>   }
 >
->  & input {
->    flex: 1;
->    border: none;
->    border-bottom: 1px solid #40a640;
->    outline: none;
->    background-color: transparent;
->  }
-> ...
+>   & form > * {
+>     padding: 0.5rem;
+>     font-size: 1rem;
+>   }
+>
+>   & input {
+>     flex: 1;
+>     border: none;
+>     border-bottom: 1px solid #40a640;
+>     outline: none;
+>     background-color: transparent;
+>   }
+>   ...
 > }
 > ```
-> - O seletor `& > *` está dentro do contexto do seletor `.entrada`, logo é a mesma coisa que `.entrada > *`. Assim como o seletor `& input`, que tem o mesmo efeito de `.entrada input`.
-> - Lembrando que o `>` é um seletor de filho imediato, enquanto o `*` seleciona todos os elementos em um determinado contexto (`.entrada > *` — seleciona todos os elementos que são filhos imediatos do elemento com a classe `entrada`).
+> - O seletor `& form > *` está dentro do contexto do seletor `.entrada`, logo é a mesma coisa que `.entrada form > *`. Assim como o seletor `& input`, que tem o mesmo efeito de `.entrada input`.
+> - Lembrando que o `>` é um seletor de filho imediato, enquanto o `*` seleciona todos os elementos em um determinado contexto (`.entrada form > *` — seleciona todos os elementos que são filhos imediatos do elemento `form`).
 
 ---
 
@@ -230,7 +241,7 @@ Agora vamos criar a lógica da aplicação em JavaScript para adicionar, marcar 
 
     ```javascript
     const campoEntrada = document.getElementById("campoEntrada");
-    const btnAdicionar = document.getElementById("btnAdicionar");
+    const formTarefa = document.getElementById("formTarefa");
     const listaTarefas = document.getElementById("listaTarefas");
     ```
 
@@ -316,7 +327,7 @@ Agora vamos criar a lógica da aplicação em JavaScript para adicionar, marcar 
     > 🚨❓ **Questão 04**
     > *- O que o método `createElement()` faz e que informação ele precisa receber como argumento?*
 
-    - Agora, vamos adicionar o texto que o usuário digitou no campo de entrada ao `span` dentro do item da lista de tarefas. Além disso, vamos inserir um ícone de lixeira no botão de exclusão.
+    - Agora, vamos adicionar o texto que o usuário digitou no campo de entrada ao `span` dentro do item da lista de tarefas. Também vamos inserir um ícone de lixeira no botão de exclusão. Além disso, vamos dar uma descrição, para fins de acessibilidade, com a definição do atributo `aria-label` para o botão com ícone de exclusão (ver mais sobre atributos `aria` [aqui](https://developer.mozilla.org/pt-BR/docs/Web/Accessibility/ARIA)).
 
     ```javascript
     ...
@@ -335,6 +346,7 @@ Agora vamos criar a lógica da aplicação em JavaScript para adicionar, marcar 
 
       span.innerText = nomeTarefa;
       btnExcluir.innerHTML = "<i class='bi bi-trash'></i>";
+      btnExcluir.setAttribute("aria-label", "Excluir tarefa");
     }
     ```
     > **Explicação rápida**: o trecho `<i class='bi bi-trash'></i>` é defindo pelo Bootstrap Icons, é assim que a biblioteca sabe que queremos inserir um ícone de determinado tipo.
@@ -367,6 +379,7 @@ Agora vamos criar a lógica da aplicação em JavaScript para adicionar, marcar 
 
       span.innerText = nomeTarefa;
       btnExcluir.innerHTML = "<i class='bi bi-trash'></i>";
+      btnExcluir.setAttribute("aria-label", "Excluir tarefa");
 
       span.onclick = (evento) => {
         evento.target.classList.toggle("concluida");
@@ -403,6 +416,7 @@ Agora vamos criar a lógica da aplicação em JavaScript para adicionar, marcar 
 
       span.innerText = nomeTarefa;
       btnExcluir.innerHTML = "<i class='bi bi-trash'></i>";
+      btnExcluir.setAttribute("aria-label", "Excluir tarefa");
 
       span.onclick = (evento) => {
         evento.target.classList.toggle("concluida");
@@ -421,22 +435,19 @@ Agora vamos criar a lógica da aplicação em JavaScript para adicionar, marcar 
     ```
     > **Explicação**: o método `appendChild()` adiciona uma tag filha em um elemento (ao final de todas as suas tags filhas).
 
-1. Para finalizar nossa prática, vamos definir dois eventos para chamar a função `novaTarefa()`, criada acima.
+1. Para finalizar nossa prática, vamos um evento para chamar a função `novaTarefa()`, criada acima.
     > O código seguinte, deve ser adicionado ao final do arquivo (após a definição da função `novaTarefa()`)
-    - O primeiro evento será o de clique no botão de adicionar.
-    - O segundo evento irá capturar o acionamento da tecla Enter.
+    - O evento que vamos tratar é o de submissão (_submit_) do formulário.
 
     ```javascript
     ...
-    btnAdicionar.addEventListener("click", novaTarefa);
 
-    campoEntrada.addEventListener("keydown", (evento) => {
-      if (evento.key === "Enter") {
-        novaTarefa();
-      }
+    formTarefa.addEventListener("submit", (evento) => {
+      evento.preventDefault();
+      novaTarefa();
     });
     ```
-    **Explicação**: foi necessário um tratamento extra no evento de acionamento da tecla Enter, visto que esse evento (`onkeydown`) é disparado quando qualquer tecla é pressionada.
+    **Explicação**: ao adicionar o ouvinte de eventos (_event listener_) para o evento de submissão, precisamos prevenir o comportamento padrão desse evento (enviar os dados do form e recarregar a página). Isso é necessário pois não queremos o comportamento de recarregar a página ao submeter o formulário, simplesmente queremos atualizar a lista de tarefas.
 
     > 🚨❓ **Questão 07**
     > *- Os manipuladores dos eventos de clique no botão de adicionar e pressionamento da tecla enter foram definidos de forma diferente agora, usando o método `addEventListener()`. Explique o funcionamento desse método e o que ele precisa receber como parâmetro.*
